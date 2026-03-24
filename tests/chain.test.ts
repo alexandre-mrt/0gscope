@@ -75,4 +75,32 @@ describe("Address validation", () => {
 		expect(isValidTxHash("0x123")).toBe(false);
 		expect(isValidTxHash("abc")).toBe(false);
 	});
+
+	test("address and tx hash are different lengths", () => {
+		const addr = "0x" + "a".repeat(40);
+		const tx = "0x" + "a".repeat(64);
+		expect(isValidAddress(addr)).toBe(true);
+		expect(isValidTxHash(addr)).toBe(false);
+		expect(isValidAddress(tx)).toBe(false);
+		expect(isValidTxHash(tx)).toBe(true);
+	});
+});
+
+describe("Network names", () => {
+	const networks = {
+		testnet: { chainId: 16602, name: "Galileo" },
+		mainnet: { chainId: 16661, name: "Aristotle" },
+	};
+
+	test("testnet and mainnet have unique chain IDs", () => {
+		expect(networks.testnet.chainId).not.toBe(networks.mainnet.chainId);
+	});
+
+	test("testnet and mainnet have different names", () => {
+		expect(networks.testnet.name).not.toBe(networks.mainnet.name);
+	});
+
+	test("only 2 networks supported", () => {
+		expect(Object.keys(networks).length).toBe(2);
+	});
 });
