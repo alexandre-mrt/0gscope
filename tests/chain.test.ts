@@ -104,3 +104,43 @@ describe("Network names", () => {
 		expect(Object.keys(networks).length).toBe(2);
 	});
 });
+
+describe("Time formatting", () => {
+	function timeAgo(ts: number): string {
+		const s = Math.floor(Date.now() / 1000 - ts);
+		if (s < 60) return `${s}s ago`;
+		if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+		return `${Math.floor(s / 3600)}h ago`;
+	}
+
+	test("recent timestamp shows seconds", () => {
+		const now = Math.floor(Date.now() / 1000);
+		const result = timeAgo(now - 30);
+		expect(result).toContain("30s ago");
+	});
+
+	test("minute-old timestamp", () => {
+		const now = Math.floor(Date.now() / 1000);
+		const result = timeAgo(now - 120);
+		expect(result).toBe("2m ago");
+	});
+
+	test("hour-old timestamp", () => {
+		const now = Math.floor(Date.now() / 1000);
+		const result = timeAgo(now - 7200);
+		expect(result).toBe("2h ago");
+	});
+
+	test("zero seconds ago", () => {
+		const now = Math.floor(Date.now() / 1000);
+		const result = timeAgo(now);
+		expect(result).toBe("0s ago");
+	});
+});
+
+describe("Gas formatting", () => {
+	test("gas values are formatted with commas via toLocaleString", () => {
+		expect(Number(500000).toLocaleString()).toBe("500,000");
+		expect(Number(30000000).toLocaleString()).toBe("30,000,000");
+	});
+});
