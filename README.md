@@ -1,5 +1,8 @@
 # 0GScope
 
+[![CI](https://github.com/alexandre-mrt/0gscope/actions/workflows/ci.yml/badge.svg)](https://github.com/alexandre-mrt/0gscope/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Analytics dashboard and block explorer for the 0G network.**
 
 Real-time chain analytics for both 0G testnet (Galileo) and mainnet (Aristotle). Search transactions, view blocks, check address balances, and monitor network health.
