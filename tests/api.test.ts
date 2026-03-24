@@ -120,4 +120,24 @@ describe("GET /api/address/:network/:address", () => {
 			expect(json.data).toHaveProperty("txCount");
 		}
 	});
+
+	test("rejects invalid network", async () => {
+		const res = await app.request("/api/address/badnet/0x0000000000000000000000000000000000000000");
+		expect(res.status).toBe(400);
+	});
+});
+
+describe("Error response format", () => {
+	test("all 400 errors have error field", async () => {
+		const res = await app.request("/api/stats/invalid");
+		const json = await res.json();
+		expect(json).toHaveProperty("error");
+		expect(typeof json.error).toBe("string");
+	});
+
+	test("block validation error is descriptive", async () => {
+		const res = await app.request("/api/block/testnet/abc");
+		const json = await res.json();
+		expect(json.error.length).toBeGreaterThan(10);
+	});
 });

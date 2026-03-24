@@ -25,7 +25,10 @@ apiRouter.get("/stats/:network", async (c) => {
 
 apiRouter.get("/blocks/:network", async (c) => {
 	const network = c.req.param("network") as "testnet" | "mainnet";
-	const count = Math.min(Number(c.req.query("count") || "10"), 25);
+	if (!validateNetwork(network)) {
+		return c.json({ error: "Invalid network" }, 400);
+	}
+	const count = Math.min(Math.max(1, Number(c.req.query("count") || "10") || 10), 25);
 
 	try {
 		const blocks = await getRecentBlocks(network, count);
@@ -57,6 +60,10 @@ apiRouter.get("/block/:network/:number", async (c) => {
 
 apiRouter.get("/tx/:network/:hash", async (c) => {
 	const network = c.req.param("network") as "testnet" | "mainnet";
+	if (!validateNetwork(network)) {
+		return c.json({ error: "Invalid network" }, 400);
+	}
+
 	const hash = c.req.param("hash");
 
 	if (!hash.startsWith("0x") || hash.length !== 66) {
@@ -74,6 +81,10 @@ apiRouter.get("/tx/:network/:hash", async (c) => {
 
 apiRouter.get("/address/:network/:address", async (c) => {
 	const network = c.req.param("network") as "testnet" | "mainnet";
+	if (!validateNetwork(network)) {
+		return c.json({ error: "Invalid network" }, 400);
+	}
+
 	const address = c.req.param("address");
 
 	if (!address.startsWith("0x") || address.length !== 42) {
