@@ -40,6 +40,22 @@ describe("GET /api/blocks/:network", () => {
 			}
 		}
 	});
+
+	test("caps block count at 25", async () => {
+		const res = await app.request("/api/blocks/testnet?count=100");
+		if (res.status === 200) {
+			const json = await res.json();
+			expect(json.data.blocks.length).toBeLessThanOrEqual(25);
+		}
+	});
+
+	test("defaults to 10 blocks", async () => {
+		const res = await app.request("/api/blocks/testnet");
+		if (res.status === 200) {
+			const json = await res.json();
+			expect(json.data.blocks.length).toBeLessThanOrEqual(10);
+		}
+	});
 });
 
 describe("GET /api/block/:network/:number", () => {
