@@ -3,6 +3,12 @@ import { getAddressInfo, getBlock, getNetworkStats, getRecentBlocks, getTransact
 
 export const apiRouter = new Hono();
 
+const VALID_NETWORKS = new Set(["testnet", "mainnet"]);
+
+function validateNetwork(network: string): network is "testnet" | "mainnet" {
+	return VALID_NETWORKS.has(network);
+}
+
 apiRouter.get("/stats/:network", async (c) => {
 	const network = c.req.param("network") as "testnet" | "mainnet";
 	if (network !== "testnet" && network !== "mainnet") {
@@ -31,7 +37,14 @@ apiRouter.get("/blocks/:network", async (c) => {
 
 apiRouter.get("/block/:network/:number", async (c) => {
 	const network = c.req.param("network") as "testnet" | "mainnet";
+	if (!validateNetwork(network)) {
+		return c.json({ error: "Invalid network" }, 400);
+	}
+
 	const blockNum = Number(c.req.param("number"));
+	if (Number.isNaN(blockNum) || blockNum < 0 || !Number.isInteger(blockNum)) {
+		return c.json({ error: "Block number must be a non-negative integer" }, 400);
+	}
 
 	try {
 		const block = await getBlock(network, blockNum);

@@ -45,8 +45,24 @@ describe("GET /api/blocks/:network", () => {
 describe("GET /api/block/:network/:number", () => {
 	test("returns 404 or error for block 0 on testnet", async () => {
 		const res = await app.request("/api/block/testnet/0");
-		// Block 0 may or may not exist depending on chain
 		expect([200, 404, 500]).toContain(res.status);
+	});
+
+	test("rejects non-numeric block number", async () => {
+		const res = await app.request("/api/block/testnet/abc");
+		expect(res.status).toBe(400);
+		const json = await res.json();
+		expect(json.error).toContain("non-negative integer");
+	});
+
+	test("rejects negative block number", async () => {
+		const res = await app.request("/api/block/testnet/-1");
+		expect(res.status).toBe(400);
+	});
+
+	test("rejects invalid network", async () => {
+		const res = await app.request("/api/block/badnet/1");
+		expect(res.status).toBe(400);
 	});
 });
 
