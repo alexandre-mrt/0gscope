@@ -15,4 +15,8 @@ describe("Chain ID constants", () => {
 		expect(16602).toBeGreaterThan(0);
 		expect(16661).toBeGreaterThan(0);
 	});
+
+	test("testnet and mainnet have different chain IDs", () => {
+		expect(16602).not.toBe(16661);
+	});
 });
