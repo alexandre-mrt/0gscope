@@ -51,16 +51,33 @@ describe("GET /api/block/:network/:number", () => {
 });
 
 describe("GET /api/tx/:network/:hash", () => {
-	test("returns 404 for nonexistent tx", async () => {
-		const res = await app.request("/api/tx/testnet/0x0000000000000000000000000000000000000000000000000000000000000000");
-		if (res.status === 404) {
-			const json = await res.json();
-			expect(json.error).toContain("not found");
-		}
+	test("rejects invalid tx hash format", async () => {
+		const res = await app.request("/api/tx/testnet/invalid");
+		expect(res.status).toBe(400);
+		const json = await res.json();
+		expect(json.error).toContain("Invalid transaction hash");
+	});
+
+	test("rejects short tx hash", async () => {
+		const res = await app.request("/api/tx/testnet/0x1234");
+		expect(res.status).toBe(400);
+	});
+
+	test("handles valid but nonexistent tx", async () => {
+		const res = await app.request("/api/tx/testnet/0x" + "0".repeat(64));
+		// May be 404 or 500 depending on RPC
+		expect([404, 500]).toContain(res.status);
 	});
 });
 
 describe("GET /api/address/:network/:address", () => {
+	test("rejects invalid address format", async () => {
+		const res = await app.request("/api/address/testnet/notanaddress");
+		expect(res.status).toBe(400);
+		const json = await res.json();
+		expect(json.error).toContain("Invalid address");
+	});
+
 	test("returns address info for zero address", async () => {
 		const res = await app.request("/api/address/testnet/0x0000000000000000000000000000000000000000");
 		if (res.status === 200) {
