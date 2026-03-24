@@ -9,6 +9,18 @@ function validateNetwork(network: string): network is "testnet" | "mainnet" {
 	return VALID_NETWORKS.has(network);
 }
 
+apiRouter.get("/networks", (c) => {
+	return c.json({
+		success: true,
+		data: {
+			networks: [
+				{ id: "testnet", name: "Galileo", chainId: 16602, rpc: "https://evmrpc-testnet.0g.ai" },
+				{ id: "mainnet", name: "Aristotle", chainId: 16661, rpc: "https://evmrpc.0g.ai" },
+			],
+		},
+	});
+});
+
 apiRouter.get("/stats/:network", async (c) => {
 	const network = c.req.param("network") as "testnet" | "mainnet";
 	if (network !== "testnet" && network !== "mainnet") {
