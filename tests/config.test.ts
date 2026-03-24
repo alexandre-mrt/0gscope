@@ -65,4 +65,20 @@ describe("Search input parsing", () => {
 	test("handles empty string", () => {
 		expect(classifyInput("")).toBe("unknown");
 	});
+
+	test("0x alone is unknown (too short for address or tx)", () => {
+		expect(classifyInput("0x")).toBe("unknown");
+	});
+
+	test("block number with leading zeros", () => {
+		expect(classifyInput("00123")).toBe("block");
+	});
+
+	test("very large block number", () => {
+		expect(classifyInput("999999999")).toBe("block");
+	});
+
+	test("negative number is unknown", () => {
+		expect(classifyInput("-1")).toBe("unknown");
+	});
 });
